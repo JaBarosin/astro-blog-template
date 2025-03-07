@@ -1,0 +1,14 @@
+stages:
+  - deploy
+
+deploy_to_cloudflare:
+  stage: deploy
+  image: node:18  # Node.js 18 is required for Astro
+  before_script:
+    - npm install -g wrangler  # Install Wrangler in GitLab CI/CD
+    - npm install  # Install project dependencies
+    - npm run build  # Build the Astro site
+  script:
+    - wrangler pages publish ./dist --project-name $CLOUDFLARE_PROJECT_NAME --api-token $CLOUDFLARE_API_TOKEN --account-id $CLOUDFLARE_ACCOUNT_ID
+  only:
+    - main  # Deploy only when pushing to the main branch
